@@ -36,7 +36,7 @@ const el = (tag: string, className = "", text = "") => {
   return node;
 };
 
-let config: ConfigResponse = { liveAvailable: false, model: "" };
+let config: ConfigResponse = { liveAvailable: false, liveProblem: null, model: "" };
 let examples: ExampleSummary[] = [];
 let selected = "";
 let running = false;
@@ -107,9 +107,9 @@ function renderModeNote() {
   if (mode() === "fixture") {
     note.append(el("strong", "", "Fixture mode. "), "Color reports are prerecorded and the review is done by fixed rules. No model is called.");
   } else if (config.liveAvailable) {
-    note.append(el("strong", "", "Live mode. "), `The color agent and the review agent call ${config.model}. The thermal report is still a scripted demo observation.`);
+    note.append(el("strong", "", "Live mode. "), `The color agent and the review agent call a model (${config.model}). The thermal report is still a scripted demo observation.`);
   } else {
-    note.append(el("strong", "", "Live mode, but no model credentials are configured on the server. "), "Runs will fail until a key is set. Switch on Fixture mode to use the prerecorded reports.");
+    note.append(el("strong", "", "Live mode is not ready. "), `${config.liveProblem ?? ""} Until then, switch on Fixture mode to use the prerecorded reports.`);
   }
 }
 

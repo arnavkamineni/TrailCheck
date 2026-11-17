@@ -16,18 +16,37 @@ For a plain run use `npm run build` and then `npm start`.
 
 Other commands: `npm run lint`, `npm test` (review rules), `npm run typecheck`.
 
+## Live mode
+
+Live mode runs the color agent and the review agent on a real model. There are two ways.
+
+**Local model (no key, no internet during the demo).** Uses [Ollama](https://ollama.com) on
+your machine.
+
+1. Install Ollama and start it.
+2. Download a vision model once: `ollama pull gemma3:4b` (about 3 GB).
+3. Restart `npm run dev` and reload the page. Fixture mode starts switched off.
+
+The first run is slow while the model loads. To try a different vision model, pull it and set
+`OLLAMA_MODEL`, for example `llama3.2-vision`.
+
+**Claude.** Set `ANTHROPIC_API_KEY` in `.env`.
+
+If live mode is not ready, the note under the page title says what is missing, and a run fails
+with the same message in the first card.
+
 ## Environment variables
 
 Copy `.env.example` to `.env`. All are optional.
 
 | Variable | Purpose |
 |---|---|
-| `ANTHROPIC_API_KEY` | Enables live mode. Read by the server only and never sent to the browser. |
-| `TRAILCHECK_MODEL` | Model for the two live steps. Default `claude-opus-5-5`. |
+| `TRAILCHECK_PROVIDER` | `ollama` or `anthropic`. Default: `anthropic` if a key is set, otherwise `ollama`. |
+| `OLLAMA_MODEL` | Local vision model. Default `gemma3:4b`. |
+| `OLLAMA_HOST` | Default `http://localhost:11434`. |
+| `ANTHROPIC_API_KEY` | Enables Claude. Read by the server only and never sent to the browser. |
+| `TRAILCHECK_MODEL` | Claude model. Default `claude-opus-5-5`. |
 | `PORT` | Default `5173`. |
-
-Without a key the page starts with **Fixture mode** switched on. If you switch it off without a key,
-the run fails with a clear message in the first card.
 
 ## What is live and what is staged
 
@@ -48,8 +67,12 @@ Details worth knowing before presenting:
   on the page says so. They are not real night captures and not from a trail camera.
 - **The prerecorded color reports** were written during the build by looking at the darkened
   photos. They were not produced by the app's color agent, because no model key was available.
-- **The live path has not been run end to end** for the same reason. Model outputs are requested
-  as structured output and validated on the server before use, and failures show in the cards.
+- **Neither live path has been run against a real model.** The local path was tested against a
+  stand-in for Ollama, and the Claude path only as far as a rejected key. Model outputs are
+  requested as structured output and validated on the server before use, and failures show in
+  the cards.
+- A small local model may read the darkened photos differently from the prerecorded reports,
+  or return "unknown". The page shows whatever it returns.
 - In live mode the model picks the outcome and writes the three sentences. The headline wording
   ("Thermal evidence inconclusive", "unavailable", "No warm region reported") is always built by
   the server from the thermal report's status, so missing evidence is never worded as an observation.

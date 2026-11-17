@@ -12,7 +12,7 @@ import {
   type ReviewResponse,
   type ThermalResponse,
 } from "../shared/schemas.ts";
-import { AgentError, MODEL, liveAvailable, runColorAgent, runReviewAgent } from "./agents.ts";
+import { AgentError, liveProblem, modelLabel, runColorAgent, runReviewAgent } from "./agents.ts";
 import { EXAMPLES, findExample, summarize } from "./examples.ts";
 import { finishReview, reviewWithRules } from "./reviewRules.ts";
 
@@ -71,7 +71,8 @@ function example(id: string) {
 
 async function handleApi(req: IncomingMessage, res: ServerResponse, route: string): Promise<void> {
   if (req.method === "GET" && route === "/api/config") {
-    return sendJson(res, 200, { liveAvailable: liveAvailable(), model: MODEL } satisfies ConfigResponse);
+    const problem = await liveProblem();
+    return sendJson(res, 200, { liveAvailable: !problem, liveProblem: problem, model: modelLabel() } satisfies ConfigResponse);
   }
   if (req.method === "GET" && route === "/api/examples") {
     return sendJson(res, 200, EXAMPLES.map(summarize));
@@ -89,7 +90,7 @@ async function handleApi(req: IncomingMessage, res: ServerResponse, route: strin
         : {
             report: await runColorAgent(path.join(PUBLIC_DIR, ex.colorImage)),
             provenance: "live",
-            provenanceLabel: `Color agent. Live model output (${MODEL}).`,
+            provenanceLabel: `Color agent. Live model output (${modelLabel()}).`,
           };
     return sendJson(res, 200, body);
   }
@@ -113,7 +114,7 @@ async function handleApi(req: IncomingMessage, res: ServerResponse, route: strin
         : {
             review: finishReview(await runReviewAgent(color, thermal), thermal),
             producedBy: "model",
-            producedByLabel: `Review agent. Live model output (${MODEL}). The headline wording is fixed by the server.`,
+            producedByLabel: `Review agent. Live model output (${modelLabel()}). The headline wording is fixed by the server.`,
             colorOnlyRecommendation,
           };
     return sendJson(res, 200, body);
@@ -147,5 +148,7 @@ const server = createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Trail Check: http://localhost:${PORT}`);
-  console.log(liveAvailable() ? `Live mode available (model ${MODEL}).` : "No model credentials found. Fixture mode only.");
+  void liveProblem().then((problem) =>
+    console.log(problem ? `Live mode not ready: ${problem} Fixture mode works.` : `Live mode ready (${modelLabel()}).`),
+  );
 });

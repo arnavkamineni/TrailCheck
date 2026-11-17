@@ -96,6 +96,8 @@ export interface ExampleSummary {
 
 export interface ConfigResponse {
   liveAvailable: boolean;
+  /** Why live mode cannot run, when it cannot. */
+  liveProblem: string | null;
   model: string;
 }
 
