@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trail Check</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div>
+        <h1>Trail Check</h1>
+        <p class="sub">Trail-camera alert review for park volunteers. Demo with two staged examples. A person makes the final call.</p>
+      </div>
+      <label class="switch" title="Use prerecorded reports and deterministic review rules instead of live model calls">
+        <input type="checkbox" id="fixture-mode" />
+        <span>Fixture mode</span>
+      </label>
+    </header>
+    <p id="mode-note" class="mode-note"></p>
+
+    <main>
+      <nav id="tabs" class="tabs" aria-label="Examples"></nav>
+
+      <section class="views">
+        <figure class="view">
+          <figcaption><span id="color-label"></span></figcaption>
+          <div class="frame"><img id="color-img" alt="Color trail-camera photo" /><div class="region" id="color-region"><span>Example region</span></div></div>
+        </figure>
+        <figure class="view">
+          <figcaption><span id="thermal-label" class="sim"></span></figcaption>
+          <div class="frame">
+            <img id="thermal-img" alt="Simulated thermal view" />
+            <div class="region" id="thermal-region"><span>Example region</span></div>
+            <div class="cover" id="thermal-cover">Hidden. This run uses the color report only.</div>
+          </div>
+        </figure>
+      </section>
+      <p class="capture"><strong>Capture note:</strong> <span id="capture-note"></span> <span id="credit" class="credit"></span></p>
+
+      <section class="controls">
+        <button id="run" type="button">Review alert</button>
+        <label><input type="checkbox" id="color-only" /> Color report only</label>
+        <label><input type="checkbox" id="show-region" /> Show example region</label>
+      </section>
+
+      <section id="headline" class="headline" aria-live="polite"></section>
+
+      <section class="cards">
+        <article class="card" id="card-color"></article>
+        <article class="card" id="card-thermal"></article>
+        <article class="card" id="card-review"></article>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

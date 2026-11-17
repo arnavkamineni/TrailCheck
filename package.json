@@ -1,0 +1,33 @@
+{
+  "name": "trail-check",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Two-minute demo: a park volunteer reviews a nighttime trail-camera alert.",
+  "scripts": {
+    "dev": "npm run build:web && tsx watch --env-file-if-exists=.env src/server/index.ts",
+    "build": "npm run typecheck && npm run build:web && npm run build:server",
+    "build:web": "node scripts/build-web.mjs",
+    "build:server": "esbuild src/server/index.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/server.js",
+    "start": "node --env-file-if-exists=.env dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "tsx --test src/server/*.test.ts"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.9.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.15.0",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.73.0"
+  }
+}
